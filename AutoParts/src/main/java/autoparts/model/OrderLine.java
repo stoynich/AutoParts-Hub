@@ -12,17 +12,15 @@ public class OrderLine {
         this.quantity = quantity;
         this.priceAtMoment = priceAtMoment;
         this.requestedOem = requestedOem;
-        // TODO: занятие 1 - providedOem = autoPart.getOemNumber() (изначально тот же)
+        this.providedOem = autoPart.getOemNumber();
     }
     
     public double getLineTotal() {
-        // TODO: занятие 1 - return quantity * priceAtMoment
-        return 0.0;
+        return quantity * priceAtMoment;
     }
     
     public boolean isSubstituted() {
-        // TODO: занятие 1 - проверить !requestedOem.equals(providedOem)
-        return false;
+        return !requestedOem.equals(providedOem);
     }
     
     // Геттеры...
@@ -35,7 +33,6 @@ public class OrderLine {
     
     @Override
     public String toString() {
-        // TODO: занятие 1 - улучшить формат
-        return "OrderLine: " + autoPart.getName();
+        return String.format("%s x%d = %.2f руб.", autoPart.getName(), quantity, getLineTotal());
     }
 }

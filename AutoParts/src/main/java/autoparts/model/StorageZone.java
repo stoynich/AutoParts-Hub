@@ -20,22 +20,19 @@ public class StorageZone extends BaseEntity {
         this.maxWeightKg = maxWeightKg;
         this.currentWeightKg = 0.0;
     }
-    
-    // TODO: занятие 1 - реализовать проверку вместимости
+
     public boolean canAccept(int itemsCount, double weightKg) {
-        // TODO: проверить currentLoad + itemsCount <= capacity 
-        // TODO: AND currentWeightKg + weightKg <= maxWeightKg
-        return false;
+        boolean enoughSpace = currentLoad + itemsCount <= capacity;
+        boolean enoughWeight = currentWeightKg + weightKg <= maxWeightKg;
+        return enoughSpace && enoughWeight;
     }
     
     public boolean isFull() {
-        // TODO: занятие 1 - проверить currentLoad >= capacity
-        return false;
+        return currentLoad >= capacity;
     }
     
     public int getAvailableSpace() {
-        // TODO: занятие 1 - return capacity - currentLoad
-        return 0;
+        return capacity - currentLoad;
     }
     
     // TODO: занятие 5 - проверить соответствие ABC-категории
@@ -72,7 +69,6 @@ public class StorageZone extends BaseEntity {
     
     @Override
     public String toString() {
-        // TODO: занятие 1 - улучшить формат
-        return "StorageZone[" + id + "] " + name;
+        return String.format("StorageZone{id='%s', name='%s', type=%s, abc=%s, load=%d/%d}", id, name, zoneType, abcCategory, currentLoad, capacity);
     }
 }

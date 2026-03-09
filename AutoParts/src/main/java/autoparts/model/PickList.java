@@ -40,7 +40,6 @@ public class PickList {
     
     @Override
     public String toString() {
-        // TODO: занятие 1 - улучшить формат
-        return "PickList[" + pickListId + "]";
+        return String.format("PickList{id='%s', order='%s', items=%d, completed=%s}", pickListId, orderId, lines.size(), isCompleted ? "да" : "нет");
     }
 }

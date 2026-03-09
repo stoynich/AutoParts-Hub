@@ -17,7 +17,9 @@ public class Supplier extends BaseEntity {
         this.companyName = companyName;
         this.inn = inn;
         this.contactPhone = contactPhone;
-        // TODO: занятие 1 - добавить валидацию email (contains "@")
+        if (contactEmail == null || contactEmail.contains("@")) {
+            throw new IllegalArgumentException("Некорректный email:" + contactEmail);
+        }
         this.contactEmail = contactEmail;
         this.supplyCategories = supplyCategories;
         this.deliveryDays = 7;
@@ -56,7 +58,6 @@ public class Supplier extends BaseEntity {
     
     @Override
     public String toString() {
-        // TODO: занятие 1 - улучшить формат
-        return "Supplier[" + id + "] " + companyName;
+        return String.format("Supplier{id='%s', name='%s', inn='%s', categories=%d, rating=%d, active=%s}", id, companyName, inn, supplyCategories != null ? supplyCategories.length : 0, rating, isActive ? "yes" : "no");
     }
 }

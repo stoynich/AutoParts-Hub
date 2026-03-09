@@ -25,12 +25,13 @@ public class AutoPart extends BaseEntity {
         this.weightKg = weightKg;
         this.crossNumbers = new ArrayList<>();
         this.compatibleVins = new ArrayList<>();
-        // TODO: занятие 1 - по умолчанию abcCategory = ABCCategory.C
+        this.abcCategory = ABCCategory.C;
     }
-    
-    // TODO: занятие 1 - реализовать добавление кросс-номера
+
     public void addCrossNumber(String crossNumber) {
-        // TODO: добавить в crossNumbers если не пустой
+        if (crossNumbers != null && !crossNumbers.isEmpty()) {
+            crossNumbers.add(crossNumber);
+        }
     }
     
     // TODO: занятие 2 - проверить наличие кросс-номера
@@ -50,24 +51,44 @@ public class AutoPart extends BaseEntity {
     public void updateABCCategory(ABCCategory category) {
         // TODO: обновить abcCategory
     }
-    
-    // TODO: занятие 1 - добавить геттеры/сеттеры с валидацией
-    // TODO: занятие 1 - улучшить toString() через String.format()
+
     
     public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setName(String name){
+        if (name==null || name.trim().isEmpty()){
+            throw new IllegalArgumentException("Название запчасти не может быть пустым");
+        }
+        this.name = name;
+    }
     public String getOemNumber() { return oemNumber; }
-    public void setOemNumber(String oemNumber) { this.oemNumber = oemNumber; }
+    public void setOemNumber(String oemNumber){
+        if (oemNumber == null || oemNumber.trim().isEmpty()){
+            throw new IllegalArgumentException("OEM номер не может быть пустым");
+        }
+        this.oemNumber = oemNumber;
+    }
     public PartCategory getCategory() { return category; }
-    public void setCategory(PartCategory category) { this.category = category; }
+    public void setCategory(PartCategory category){
+        if (category == null){
+            throw new IllegalArgumentException("Категория запчастей не может быть пустая");
+        }
+        this.category = category;
+    }
     public String getManufacturer() { return manufacturer; }
-    public void setManufacturer(String manufacturer) { this.manufacturer = manufacturer; }
+    public void setManufacturer(String manufacturer){
+        if (manufacturer == null || manufacturer.trim().isEmpty()){
+            throw new IllegalArgumentException("Производитель не может быть пустым");
+        }
+        this.manufacturer = manufacturer;
+    }
     public List<String> getCrossNumbers() { return crossNumbers; }
     public List<String> getCompatibleVins() { return compatibleVins; }
     public double getBasePrice() { return basePrice; }
-    public void setBasePrice(double basePrice) { 
-        // TODO: занятие 1 - добавить проверку if (basePrice < 0) throw new IllegalArgumentException
-        this.basePrice = basePrice; 
+    public void setBasePrice(double basePrice) {
+        if (basePrice < 0) {
+            throw new IllegalArgumentException("Цена не может быть отрицательной:" + basePrice);
+        }
+        this.basePrice = basePrice;
     }
     public double getWeightKg() { return weightKg; }
     public void setWeightKg(double weightKg) { this.weightKg = weightKg; }
@@ -75,7 +96,6 @@ public class AutoPart extends BaseEntity {
     
     @Override
     public String toString() {
-        // TODO: занятие 1 - сделать читаемый формат: "Тормозные колодки [OEM-12345] Bosch"
-        return "AutoPart[" + id + "] " + name;
+        return String.format("%s [%s] %s",name,oemNumber,manufacturer);
     }
 }

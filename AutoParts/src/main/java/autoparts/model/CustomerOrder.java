@@ -22,21 +22,29 @@ public class CustomerOrder extends BaseEntity {
         this.clientId = clientId;
         this.vinCode = vinCode;
         this.priority = priority;
-        // TODO: занятие 1 - статус REGISTERED
+        this.status = OrderStatus.REGISTERED;
         this.items = new ArrayList<>();
         this.totalWeight = 0.0;
     }
-    
-    // TODO: занятие 1 - добавить позицию с проверкой VIN-совместимости
+
     public void addItem(AutoPart autoPart, int quantity, double priceAtMoment) {
-        // TODO: проверить isCompatibleWithVin(vinCode)
-        // TODO: создать OrderLine и добавить в items
-        // TODO: пересчитать totalWeight
+        if (!autoPart.isCompatibleWithVin(vinCode)){
+            throw new IllegalArgumentException("Запчасть" + autoPart.getName() + "несовместима с VIN" + vinCode);
+        }
+        // Создаем позицию заказа
+        OrderLine line = new OrderLine (autoPart, quantity,priceAtMoment, autoPart.getOemNumber());
+        // Добавляем в список
+        items.add(line);
+        // Пересчитываем общий вес
+        totalWeight += autoPart.getWeightKg()*quantity;
     }
     
     public double getTotalAmount() {
-        // TODO: занятие 1 - суммировать getLineTotal() по всем items
-        return 0.0;
+        double total = 0.0;
+        for (OrderLine line : items) {
+            total += line.getLineTotal();
+        }
+        return total;
     }
     
     public boolean canChangeStatus(OrderStatus newStatus) {
@@ -51,8 +59,7 @@ public class CustomerOrder extends BaseEntity {
     }
     
     public boolean isUrgent() {
-        // TODO: занятие 1 - проверить priority == Priority.URGENT
-        return false;
+        return priority == Priority.URGENT;
     }
     
     public boolean isOverdueForPicking() {
@@ -84,7 +91,7 @@ public class CustomerOrder extends BaseEntity {
     
     @Override
     public String toString() {
-        // TODO: занятие 1 - улучшить формат
-        return "CustomerOrder[" + id + "]";
+        return String.format("CustomerOrder{externalId='%s', clientId='%s', status=%s, priority=%s, items=%d, total=%.2f}",
+                externalOrderId, clientId, status, priority, items.size(), getTotalAmount());
     }
 }

@@ -90,7 +90,6 @@ public class PartBatch {
     
     @Override
     public String toString() {
-        // TODO: занятие 1 - улучшить формат
-        return "PartBatch[" + batchId + "]";
+        return String.format("PartBatch{id='%s', part='%s', available=%d/%d, expiry=%s}", batchId, autoPart.getName(), getAvailable(), quantity, expiryDate != null ? expiryDate : "none");
     }
 }

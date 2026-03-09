@@ -25,7 +25,6 @@ public class PickLine {
     
     @Override
     public String toString() {
-        // TODO: занятие 1 - улучшить формат
-        return "PickLine[" + batchId + "] " + autoPart.getName();
+        return String.format("PickLine{part='%s', quantity=%d, zone='%s', batch='%s', picked=%s}", autoPart.getName(), quantity, zoneId, batchId, isPicked ? "да" : "нет");
     }
 }
