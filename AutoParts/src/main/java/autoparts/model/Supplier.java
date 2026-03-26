@@ -17,7 +17,7 @@ public class Supplier extends BaseEntity {
         this.companyName = companyName;
         this.inn = inn;
         this.contactPhone = contactPhone;
-        if (contactEmail == null || contactEmail.contains("@")) {
+        if (contactEmail == null || !contactEmail.contains("@")) {
             throw new IllegalArgumentException("Некорректный email:" + contactEmail);
         }
         this.contactEmail = contactEmail;
@@ -28,9 +28,15 @@ public class Supplier extends BaseEntity {
         this.isActive = true;
     }
     
-    // TODO: занятие 2 - проверить может ли поставлять категорию
     public boolean canSupplyCategory(PartCategory category) {
-        // TODO: проверить наличие category в supplyCategories
+        if (category == null) {
+            return false;
+        }
+        for  (PartCategory c : supplyCategories) {
+            if  (c == category) {
+                return true;
+            }
+        }
         return false;
     }
     
