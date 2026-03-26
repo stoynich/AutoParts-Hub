@@ -41,14 +41,30 @@ public class StorageZone extends BaseEntity {
         // TODO: или зона BULK_STORAGE принимает B и C
         return false;
     }
-    
-    // TODO: занятие 2 - реализовать добавление/удаление загрузки
+
     public void addLoad(int items, double weight) {
-        // TODO: увеличить currentLoad и currentWeightKg
+        if (items <= 0 || weight <= 0) {
+            throw new IllegalArgumentException("Количество и вес должны быть положительными");
+        }
+        if (!canAccept(items, weight)) {
+            throw new IllegalArgumentException("Превышение вместимости или грузоподъёмности зоны");
+        }
+        this.currentLoad += items;
+        this.currentWeightKg += weight;
     }
     
     public void removeLoad(int items, double weight) {
-        // TODO: уменьшить currentLoad и currentWeightKg
+        if (items <= 0 || weight <= 0) {
+            throw new IllegalArgumentException("Количество и вес должны быть положительными");
+        }
+        if (items > currentLoad) {
+            throw new IllegalArgumentException("Нельзя удалить больше чем есть в зоне");
+        }
+        if (weight > currentWeightKg) {
+            throw new IllegalArgumentException("Нельзя удалить больше веса чем есть в зоне");
+        }
+        this.currentLoad -= items;
+        this.currentWeightKg -= weight;
     }
     
     // Геттеры/сеттеры...
