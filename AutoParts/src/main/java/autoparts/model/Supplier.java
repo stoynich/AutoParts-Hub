@@ -27,7 +27,7 @@ public class Supplier extends BaseEntity {
         this.rating = 3;
         this.isActive = true;
     }
-    
+
     public boolean canSupplyCategory(PartCategory category) {
         if (category == null) {
             return false;
