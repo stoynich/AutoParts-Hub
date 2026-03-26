@@ -78,7 +78,6 @@ public class OrderProcessingService {
     }
     
     public CustomerOrder getOrderById(String orderId) {
-        // TODO: занятие 2 - поиск в orders
         return orders.get(orderId);
     }
     
