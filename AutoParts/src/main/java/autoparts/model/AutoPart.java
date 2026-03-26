@@ -33,18 +33,20 @@ public class AutoPart extends BaseEntity {
             crossNumbers.add(crossNumber);
         }
     }
-    
-    // TODO: занятие 2 - проверить наличие кросс-номера
+
     public boolean hasCrossNumber(String crossNumber) {
-        // TODO: проверить contains в crossNumbers
-        return false;
+        if (crossNumber == null){
+            return false;
+        }
+        return crossNumbers.contains(crossNumber);
     }
     
-    // TODO: занятие 2 - проверить совместимость с VIN
     public boolean isCompatibleWithVin(String vinCode) {
-        // TODO: проверить compatibleVins.isEmpty() (универсальная) 
-        // TODO: или contains(vinCode)
-        return false;
+        //Если список совместимых VIN пуст то запчасть подходит для всех авто(универсальная)
+        if (compatibleVins.isEmpty()){
+            return true;
+        }
+        return compatibleVins.contains(vinCode);
     }
     
     // TODO: занятие 5 - обновить ABC-категорию
