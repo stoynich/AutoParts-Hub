@@ -40,7 +40,7 @@ public class AutoPart extends BaseEntity {
         }
         return crossNumbers.contains(crossNumber);
     }
-    
+
     public boolean isCompatibleWithVin(String vinCode) {
         //Если список совместимых VIN пуст то запчасть подходит для всех авто(универсальная)
         if (compatibleVins.isEmpty()){

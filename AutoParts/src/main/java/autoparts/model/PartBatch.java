@@ -1,5 +1,7 @@
 package autoparts.model;
 
+import autoparts.exception.InsufficientStockException;
+
 import java.time.LocalDate;
 
 public class PartBatch {
@@ -32,23 +34,44 @@ public class PartBatch {
     }
     
     public int getAvailable() {
-        // TODO: занятие 2 - return quantity - reserved
-        return 0;
+        return quantity - reserved;
     }
     
-    // TODO: занятие 2 - реализовать резервирование с проверкой
+    // TO
     public void reserve(int amount) throws autoparts.exception.InsufficientStockException {
-        // TODO: проверить getAvailable() >= amount
-        // TODO: иначе бросить InsufficientStockException
-        // TODO: увеличить reserved
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Количество должно быть положительным");
+        }
+        if (amount > getAvailable()) {
+            throw new InsufficientStockException(
+                    "Недостаточно товара в партии " + batchId,
+                    autoPart.getId(),
+                    amount,
+                    getAvailable()
+            );
+        }
+        this.reserved += amount;
     }
     
     public void releaseReservation(int amount) {
-        // TODO: занятие 2 - уменьшить reserved
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Количество должно быть положительным ");
+        }
+        if  (amount > reserved) {
+            throw new IllegalArgumentException("Нельзя освободить больше чем зарекзервировано");
+        }
+        this.reserved -= amount;
     }
     
     public void confirmShipment(int amount) {
-        // TODO: занятие 2 - уменьшить quantity и reserved
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Количество должно быть положительным");
+        }
+        if (amount > reserved) {
+            throw new IllegalArgumentException("Нельзя отгружать больше зарезервированного");
+        }
+        this.quantity -= amount;
+        this.reserved -= amount;
     }
     
     public boolean isExpired() {
