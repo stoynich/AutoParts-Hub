@@ -5,22 +5,35 @@ import autoparts.model.CustomerOrder;
 import autoparts.model.Priority;
 
 public class PricingService {
-    
+
     public void setBasePrice(AutoPart autoPart, double price) {
-        // TODO: занятие 5 - установить basePrice
+        if (autoPart == null || price < 0) {
+            throw new IllegalArgumentException("Некорректная цена");
+        }
+
+        autoPart.setBasePrice(price);
     }
-    
+
     public void applyMarkup(AutoPart autoPart, double percent) {
-        // TODO: занятие 5 - увеличить basePrice на percent%
+        if (autoPart == null) {
+            throw new IllegalArgumentException("Запчасть не может быть null");
+        }
+
+        double newPrice = autoPart.getBasePrice() * (1 + percent / 100);
+        autoPart.setBasePrice(newPrice);
     }
-    
+
     public double getPriceForClient(AutoPart autoPart, String clientId, Priority priority) {
-        // TODO: занятие 5 - для URGENT +10% к цене
-        return autoPart.getBasePrice();
+        double price = autoPart.getBasePrice();
+
+        if (priority == Priority.URGENT) {
+            price *= 1.10; // +10%
+        }
+
+        return price;
     }
-    
+
     public double calculateOrderProfit(CustomerOrder order, double costPrice) {
-        // TODO: занятие 5 - рассчитать (getTotalAmount() - costPrice * количество)
-        return 0.0;
+        return order.getTotalAmount() - costPrice;
     }
 }
