@@ -20,13 +20,16 @@ public class PickList {
         this.createdAt = LocalDateTime.now();
         this.isCompleted = false;
     }
-    
+
     public void addLine(AutoPart part, int quantity, String zoneId, String batchId) {
-        // TODO: занятие 6 - создать PickLine и добавить в lines
+        PickLine line = new PickLine(part, quantity, zoneId, batchId);
+        lines.add(line);
     }
-    
+
     public void complete(String pickerName) {
-        // TODO: занятие 6 - установить completedAt, pickerName, isCompleted = true
+        this.completedAt = LocalDateTime.now();
+        this.pickerName = pickerName;
+        this.isCompleted = true;
     }
     
     // Геттеры...
