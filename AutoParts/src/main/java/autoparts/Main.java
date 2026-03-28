@@ -17,9 +17,10 @@ public class Main {
         // TODO: занятие 5 - инициализация логгера
         
         // TODO: занятие 5 - создание сервисов
-        
-        // TODO: занятие 4 - создание валидаторов
-       
+
+        OrderValidator orderValidator = new OrderValidator();
+        StockValidator stockValidator = new StockValidator();
+        VinValidator vinValidator = new VinValidator();
         
         // TODO: занятие 5 - создание сервиса заказов
         
