@@ -43,40 +43,6 @@
 7. **ABC-перемещение** — изменение оборота запчасти с 50 до 150/мес → пересчёт категории B→A → перемещение в зону FAST_PICK
 
 
-## Архитектура (схема взаимодействия)
-
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   ConsoleMenu   │───▶│ OrderProcessing  │───▶│   Inventory     │
-│      (UI)       │    │    Service       │    │    Service      │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-         │                      │                       │
-         ▼                      ▼                       ▼
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│  PickingService │    │  OrderValidator  │    │  StockValidator │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-         │                      │                       │
-         └──────────────────────┴───────────────────────┘
-                                │
-                    ┌───────────▼───────────┐
-                    │  Model (AutoPart,     │
-                    │  PartBatch, etc.)     │
-                    └───────────────────────┘
-
-
-## Структура проекта
-
-AutoParts/
-├── src/main/java/autoparts/
-│   ├── model/          # Модели данных (AutoPart, PartBatch, CustomerOrder и др.)
-│   ├── service/        # Сервисы (InventoryService, OrderProcessingService, PickingService)
-│   ├── catalog/        # Интеграция с каталогами (TecDoc, Exist, Autodoc)
-│   ├── logger/         # Логирование (ConsoleLogger, FileLogger)
-│   ├── validation/     # Валидаторы (OrderValidator, StockValidator, VinValidator)
-│   ├── exception/      # Исключения (InsufficientStockException и др.)
-│   └── ui/             # Консольный интерфейс (ConsoleMenu)
-└── README.md
-
-
 ## Запуск проекта
 1. Клонировать репозиторий:
    ```bash
