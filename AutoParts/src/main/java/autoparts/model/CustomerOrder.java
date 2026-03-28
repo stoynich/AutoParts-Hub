@@ -48,13 +48,21 @@ public class CustomerOrder extends BaseEntity {
     }
     
     public boolean canChangeStatus(OrderStatus newStatus) {
-        // TODO: занятие 4 - делегировать в status.canTransitionTo(newStatus)
-        return false;
+        return status.canTransitionTo(newStatus);
     }
     
     public void changeStatus(OrderStatus newStatus) {
-        // TODO: занятие 4 - проверить canChangeStatus, обновить статус
-        // TODO: если CONFIRMED, установить confirmedAt = LocalDateTime.now()
+        if (!canChangeStatus(newStatus)) {
+            throw new IllegalArgumentException(
+                    "Недопустимый переход статуса: " + status + " -> " + newStatus
+            );
+        }
+
+        this.status = newStatus;
+
+        if (newStatus == OrderStatus.CONFIRMED) {
+            this.confirmedAt = LocalDateTime.now();
+        }
         // TODO: занятие 6 - добавить в историю с timestamp
     }
     

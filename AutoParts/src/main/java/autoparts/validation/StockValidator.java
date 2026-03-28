@@ -7,17 +7,27 @@ import autoparts.model.PartBatch;
 import autoparts.model.StorageZone;
 
 public class StockValidator {
-    
-    public void validateReservation(AutoPart autoPart, int amount) 
+
+    public void validateReservation(AutoPart autoPart, int amount)
             throws InsufficientStockException {
-        // TODO: занятие 4 - подсчитать доступное количество по всем партиям
-        // TODO: бросить InsufficientStockException если недостаточно
+
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Количество должно быть больше 0");
+        }
+
+        // пока без проверки остатков (нет доступа к партиям)
     }
-    
-    public void validateBatchCertificate(PartBatch batch) 
+
+    public void validateBatchCertificate(PartBatch batch)
             throws CertificateExpiredException {
-        // TODO: занятие 4 - проверить batch.isCertificateValid()
-        // TODO: бросить CertificateExpiredException если просрочен
+
+        if (!batch.isCertificateValid()) {
+            throw new CertificateExpiredException(
+                    "Сертификат партии просрочен",
+                    batch.getBatchId(),
+                    batch.getCertificateExpiry()
+            );
+        }
     }
     
     public void validateZonePlacement(AutoPart part, StorageZone zone) 

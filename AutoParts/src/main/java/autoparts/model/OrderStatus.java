@@ -8,13 +8,21 @@ public enum OrderStatus {
     SHIPPED,
     DELIVERED,
     CANCELLED;
-    
-    // TODO: занятие 4 - реализовать логику переходов:
-    // REGISTERED -> CONFIRMED -> PICKING -> PACKED -> SHIPPED -> DELIVERED
-    // REGISTERED -> CANCELLED (до CONFIRMED)
-    // CONFIRMED -> CANCELLED (до PICKING)
+
     public boolean canTransitionTo(OrderStatus newStatus) {
-        // TODO: реализовать проверку допустимости перехода
-        return false;
+        switch (this) {
+            case REGISTERED:
+                return newStatus == CONFIRMED || newStatus == CANCELLED;
+            case CONFIRMED:
+                return newStatus == PICKING || newStatus == CANCELLED;
+            case PICKING:
+                return newStatus == PACKED;
+            case PACKED:
+                return newStatus == SHIPPED;
+            case SHIPPED:
+                return newStatus == DELIVERED;
+            default:
+                return false;
+        }
     }
 }
