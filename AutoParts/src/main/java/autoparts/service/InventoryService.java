@@ -76,21 +76,64 @@ public class InventoryService {
         // TODO: занятие 2 - суммировать quantity по всем партиям в зоне
         return 0;
     }
-    
+
     public List<AutoPart> getLowStockReport(int threshold) {
-        // TODO: занятие 5 - товары с остатком < threshold
-        return new ArrayList<>();
+        List<AutoPart> result = new ArrayList<>();
+
+        for (AutoPart part : parts.values()) {
+            int totalStock = 0;
+            List<PartBatch> partBatches = batches.get(part.getId());
+
+            if (partBatches != null) {
+                for (PartBatch batch : partBatches) {
+                    totalStock += batch.getAvailable();
+                }
+            }
+
+            if (totalStock < threshold) {
+                result.add(part);
+            }
+        }
+
+        return result;
     }
-    
+
     public List<PartBatch> getExpiredBatches() {
-        // TODO: занятие 5 - партии с isExpired() = true
-        return new ArrayList<>();
+        List<PartBatch> result = new ArrayList<>();
+
+        for (List<PartBatch> partBatches : batches.values()) {
+            for (PartBatch batch : partBatches) {
+                if (batch.isExpired()) {
+                    result.add(batch);
+                }
+            }
+        }
+
+        return result;
     }
-    
+
     public void updateABCCategories() {
-        // TODO: занятие 5 - пересчёт категорий по обороту за месяц
+        for (AutoPart part : parts.values()) {
+            int totalStock = 0;
+            List<PartBatch> partBatches = batches.get(part.getId());
+
+            if (partBatches != null) {
+                for (PartBatch batch : partBatches) {
+                    totalStock += batch.getQuantity();
+                }
+            }
+
+            if (totalStock > 100) {
+                part.updateABCCategory(ABCCategory.A);
+            } else if (totalStock >= 20) {
+                part.updateABCCategory(ABCCategory.B);
+            } else {
+                part.updateABCCategory(ABCCategory.C);
+            }
+        }
+
+        logger.log("[ABC] ABC-категории обновлены");
     }
-    
     // Геттеры для тестов
     public Map<String, AutoPart> getParts() { return parts; }
     public Map<String, StorageZone> getZones() { return zones; }
