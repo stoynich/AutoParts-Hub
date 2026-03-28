@@ -29,9 +29,13 @@ public class StockValidator {
             );
         }
     }
-    
-    public void validateZonePlacement(AutoPart part, StorageZone zone) 
+
+    public void validateZonePlacement(AutoPart part, StorageZone zone)
             throws autoparts.exception.InvalidZoneException {
-        // TODO: занятие 5 - проверить zone.isSuitableForPart(part)
+        if (!zone.isSuitableForPart(part)) {
+            throw new autoparts.exception.InvalidZoneException(
+                    "Зона не подходит для данной запчасти"
+            );
+        }
     }
 }
