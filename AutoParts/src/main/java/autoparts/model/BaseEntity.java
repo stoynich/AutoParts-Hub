@@ -29,9 +29,7 @@ public abstract class BaseEntity {
         }
         this.createdAt = createdAt;
     }
-    // TODO: занятие 4 - заменить String даты на LocalDateTime где нужно
-    
-    
+
     @Override
     public String toString() {
         return "BaseEntity{id='" + id + "', createdAt=" + createdAt + "}";

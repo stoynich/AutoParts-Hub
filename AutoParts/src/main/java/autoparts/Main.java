@@ -14,15 +14,21 @@ import autoparts.validation.VinValidator;
 
 public class Main {
     public static void main(String[] args) {
-        // TODO: занятие 5 - инициализация логгера
-        
-        // TODO: занятие 5 - создание сервисов
-        
-        // TODO: занятие 4 - создание валидаторов
-       
-        
-        // TODO: занятие 5 - создание сервиса заказов
-        
+        Logger logger = new ConsoleLogger();
+
+        InventoryService inventoryService = new InventoryService(logger);
+        PricingService pricingService = new PricingService();
+
+        OrderValidator orderValidator = new OrderValidator();
+        StockValidator stockValidator = new StockValidator();
+        VinValidator vinValidator = new VinValidator();
+
+        OrderProcessingService orderService = new OrderProcessingService(
+                inventoryService,
+                orderValidator,
+                vinValidator,
+                logger
+        );
         
         // TODO: занятие 6 - создание сервисов комплектации и каталогов
        

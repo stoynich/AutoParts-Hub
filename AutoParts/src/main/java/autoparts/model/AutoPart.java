@@ -46,10 +46,12 @@ public class AutoPart extends BaseEntity {
         // TODO: или contains(vinCode)
         return false;
     }
-    
-    // TODO: занятие 5 - обновить ABC-категорию
+
     public void updateABCCategory(ABCCategory category) {
-        // TODO: обновить abcCategory
+        if (category == null) {
+            throw new IllegalArgumentException("ABC категория не может быть null");
+        }
+        this.abcCategory = category;
     }
 
     

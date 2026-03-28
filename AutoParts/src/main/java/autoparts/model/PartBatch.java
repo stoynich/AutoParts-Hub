@@ -24,8 +24,9 @@ public class PartBatch {
         this.receivedDate = LocalDate.now();
         this.expiryDate = expiryDate;
         this.certificateNumber = certificateNumber;
-        // TODO: занятие 4 - certificateExpiry = receivedDate + 1 год (если есть сертификат)
-        this.certificateExpiry = null;
+        this.certificateExpiry = (certificateNumber != null && !certificateNumber.isBlank())
+                ? receivedDate.plusYears(1)
+                : null;
         this.countryOfOrigin = "";
         this.zone = zone;
         this.isBlocked = false;
@@ -52,18 +53,16 @@ public class PartBatch {
     }
     
     public boolean isExpired() {
-        // TODO: занятие 4 - проверить expiryDate != null && LocalDate.now().isAfter(expiryDate)
-        return false;
+        return expiryDate != null && LocalDate.now().isAfter(expiryDate);
     }
     
     public boolean isCertificateValid() {
-        // TODO: занятие 4 - проверить certificateExpiry != null 
-        // TODO: && LocalDate.now().isBefore(certificateExpiry)
-        return false;
+        return certificateExpiry != null && !LocalDate.now().isAfter(certificateExpiry);
     }
     
     public void block(String reason) {
-        // TODO: занятие 4 - установить isBlocked = true и залогировать
+        isBlocked = true;
+        System.out.println("Партия " + batchId + " заблокирована: " + reason);
     }
     
     // Геттеры/сеттеры...

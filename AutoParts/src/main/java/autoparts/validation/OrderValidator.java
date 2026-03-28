@@ -6,25 +6,46 @@ import autoparts.model.AutoPart;
 import autoparts.model.OrderStatus;
 
 public class OrderValidator {
-    
+
     public void validateOrderCreation(String externalOrderId) {
-        // TODO: занятие 4 - проверить уникальность externalOrderId
+        if (externalOrderId == null || externalOrderId.isBlank()) {
+            throw new IllegalArgumentException("externalOrderId не может быть пустым");
+        }
     }
     
     public void validateStatusTransition(CustomerOrder order, OrderStatus newStatus) 
             throws InvalidOrderStatusException {
-        // TODO: занятие 4 - проверить order.canChangeStatus(newStatus)
-        // TODO: бросить InvalidOrderStatusException если нельзя
+        if (!order.canChangeStatus(newStatus)) {
+            throw new InvalidOrderStatusException(
+                    "Недопустимый переход статуса",
+                    order.getStatus(),
+                    newStatus
+            );
+        }
     }
     
     public void validateCancellation(CustomerOrder order) 
             throws InvalidOrderStatusException {
-        // TODO: занятие 4 - отмена только до PICKING
+        if (order.getStatus() != OrderStatus.REGISTERED &&
+                order.getStatus() != OrderStatus.CONFIRMED) {
+            throw new InvalidOrderStatusException(
+                    "Отмена невозможна",
+                    order.getStatus(),
+                    OrderStatus.CANCELLED
+            );
+        }
     }
-    
-    public void validateVinCompatibility(CustomerOrder order, AutoPart part) 
+
+    public void validateVinCompatibility(CustomerOrder order, AutoPart part)
             throws autoparts.exception.IncompatiblePartException {
-        // TODO: занятие 4 - проверить part.isCompatibleWithVin(order.getVinCode())
+        if (!part.isCompatibleWithVin(order.getVinCode())) {
+            throw new autoparts.exception.IncompatiblePartException(
+                    "Запчасть несовместима с VIN",
+                    order.getVinCode(),
+                    part.getOemNumber(),
+                    "Проверка совместимости не пройдена"
+            );
+        }
     }
     
     public void validateUrgentPriority(CustomerOrder order) {

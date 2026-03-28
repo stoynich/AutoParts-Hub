@@ -34,11 +34,23 @@ public class StorageZone extends BaseEntity {
     public int getAvailableSpace() {
         return capacity - currentLoad;
     }
-    
-    // TODO: занятие 5 - проверить соответствие ABC-категории
+
     public boolean isSuitableForPart(AutoPart part) {
-        // TODO: проверить part.getAbcCategory() == this.abcCategory 
-        // TODO: или зона BULK_STORAGE принимает B и C
+        if (part == null || part.getAbcCategory() == null) {
+            return false;
+        }
+
+        // обычное совпадение категории
+        if (part.getAbcCategory() == this.abcCategory) {
+            return true;
+        }
+
+        // особое правило для BULK_STORAGE
+        if (this.zoneType == ZoneType.BULK_STORAGE) {
+            return part.getAbcCategory() == ABCCategory.B ||
+                    part.getAbcCategory() == ABCCategory.C;
+        }
+
         return false;
     }
     
