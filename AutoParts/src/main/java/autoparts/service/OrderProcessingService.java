@@ -12,13 +12,16 @@ public class OrderProcessingService {
     private final InventoryService inventoryService;
     private final OrderValidator orderValidator;
     private final Logger logger;
-    
-    public OrderProcessingService(InventoryService inventoryService, 
-                                 OrderValidator orderValidator, 
-                                 Logger logger) {
+    private final PickingService pickingService;
+
+    public OrderProcessingService(InventoryService inventoryService,
+                                  OrderValidator orderValidator,
+                                  PickingService pickingService,
+                                  Logger logger) {
         this.orders = new HashMap<>();
         this.inventoryService = inventoryService;
         this.orderValidator = orderValidator;
+        this.pickingService = pickingService;
         this.logger = logger;
     }
     
@@ -48,33 +51,89 @@ public class OrderProcessingService {
             throws OrderNotFoundException, InsufficientStockException {
         // TODO: занятие 5 - зарезервировать товары под заказ
     }
-    
-    // TODO: занятие 6 - создание задания на комплектацию
-    public PickList startPicking(String orderId) 
+
+    public PickList startPicking(String orderId)
             throws OrderNotFoundException {
-        // TODO: проверить статус CONFIRMED
-        // TODO: создать PickList через PickingService
-        // TODO: статус -> PICKING
-        return null;
+        CustomerOrder order = orders.get(orderId);
+        if (order == null) {
+            throw new OrderNotFoundException(orderId);
+        }
+
+        if (order.getStatus() != OrderStatus.CONFIRMED) {
+            throw new IllegalStateException("Комплектацию можно начать только для CONFIRMED заказа");
+        }
+
+        PickList pickList = pickingService.createPickList(orderId);
+        order.changeStatus(OrderStatus.PICKING);
+
+        logger.log("[PICKING] Создано задание на комплектацию для заказа: " + orderId);
+        return pickList;
     }
-    
-    public void packOrder(String orderId, double actualWeight) 
+
+    public void packOrder(String orderId, double actualWeight)
             throws OrderNotFoundException {
-        // TODO: занятие 6 - статус -> PACKED, проверка веса
+        CustomerOrder order = orders.get(orderId);
+        if (order == null) {
+            throw new OrderNotFoundException(orderId);
+        }
+
+        if (actualWeight <= 0) {
+            throw new IllegalArgumentException("Вес упаковки должен быть больше 0");
+        }
+
+        order.setTotalWeight(actualWeight);
+        order.changeStatus(OrderStatus.PACKED);
+
+        logger.log("[PACK] Заказ упакован: " + orderId + ", вес=" + actualWeight);
     }
-    
-    public void shipOrder(String orderId, String trackingNumber) 
+
+    public void shipOrder(String orderId, String trackingNumber)
             throws OrderNotFoundException {
-        // TODO: занятие 6 - статус -> SHIPPED, вызвать confirmShipment
+        CustomerOrder order = orders.get(orderId);
+        if (order == null) {
+            throw new OrderNotFoundException(orderId);
+        }
+
+        if (trackingNumber == null || trackingNumber.isBlank()) {
+            throw new IllegalArgumentException("Трек-номер не может быть пустым");
+        }
+
+        order.setTrackingNumber(trackingNumber);
+
+        for (OrderLine line : order.getItems()) {
+            inventoryService.confirmShipment(line.getAutoPart(), line.getQuantity());
+        }
+
+        order.changeStatus(OrderStatus.SHIPPED);
+
+        logger.log("[SHIP] Заказ отгружен: " + orderId + ", tracking=" + trackingNumber);
     }
-    
+
     public void deliverOrder(String orderId) throws OrderNotFoundException {
-        // TODO: занятие 6 - статус -> DELIVERED
+        CustomerOrder order = orders.get(orderId);
+        if (order == null) {
+            throw new OrderNotFoundException(orderId);
+        }
+
+        order.changeStatus(OrderStatus.DELIVERED);
+        logger.log("[DELIVERY] Заказ доставлен: " + orderId);
     }
-    
-    public void cancelOrder(String orderId) 
+
+    public void cancelOrder(String orderId)
             throws OrderNotFoundException, InvalidOrderStatusException {
-        // TODO: занятие 6 - только до PICKING, освободить резерв
+        CustomerOrder order = orders.get(orderId);
+        if (order == null) {
+            throw new OrderNotFoundException(orderId);
+        }
+
+        orderValidator.validateCancellation(order);
+
+        for (OrderLine line : order.getItems()) {
+            inventoryService.releaseReservation(line.getAutoPart(), line.getQuantity());
+        }
+
+        order.changeStatus(OrderStatus.CANCELLED);
+        logger.log("[CANCEL] Заказ отменен: " + orderId);
     }
     
     public CustomerOrder getOrderById(String orderId) {

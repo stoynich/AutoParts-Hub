@@ -14,6 +14,7 @@ public class CustomerOrder extends BaseEntity {
     private String vinCode;
     private double totalWeight;
     private String trackingNumber;
+    private List<String> statusHistory;
     
     public CustomerOrder(String orderId, String externalOrderId, String clientId, 
                         String vinCode, Priority priority) {
@@ -25,6 +26,8 @@ public class CustomerOrder extends BaseEntity {
         this.status = OrderStatus.REGISTERED;
         this.items = new ArrayList<>();
         this.totalWeight = 0.0;
+        this.statusHistory = new ArrayList<>();
+        this.statusHistory.add(LocalDateTime.now() + " -> " + status);
     }
 
     public void addItem(AutoPart autoPart, int quantity, double priceAtMoment) {
@@ -55,7 +58,7 @@ public class CustomerOrder extends BaseEntity {
     public void changeStatus(OrderStatus newStatus) {
         // TODO: занятие 4 - проверить canChangeStatus, обновить статус
         // TODO: если CONFIRMED, установить confirmedAt = LocalDateTime.now()
-        // TODO: занятие 6 - добавить в историю с timestamp
+        statusHistory.add(LocalDateTime.now() + " -> " + newStatus);
     }
     
     public boolean isUrgent() {
@@ -63,12 +66,15 @@ public class CustomerOrder extends BaseEntity {
     }
     
     public boolean isOverdueForPicking() {
-        // TODO: занятие 6 - для URGENT проверить 
-        // TODO: Duration.between(confirmedAt, LocalDateTime.now()).toMinutes() > 30
-        return false;
+        if (!isUrgent() || confirmedAt == null) {
+            return false;
+        }
+
+        return java.time.Duration
+                .between(confirmedAt, LocalDateTime.now())
+                .toMinutes() > 30;
     }
-    
-    // TODO: занятие 6 - добавить поле для истории статусов: List<String> statusHistory
+
     
     // Геттеры/сеттеры...
     public String getExternalOrderId() { return externalOrderId; }
@@ -88,6 +94,9 @@ public class CustomerOrder extends BaseEntity {
     public void setTotalWeight(double totalWeight) { this.totalWeight = totalWeight; }
     public String getTrackingNumber() { return trackingNumber; }
     public void setTrackingNumber(String trackingNumber) { this.trackingNumber = trackingNumber; }
+    public List<String> getStatusHistory() {
+        return statusHistory;
+    }
     
     @Override
     public String toString() {

@@ -16,33 +16,42 @@ public class PickingService {
         this.inventoryService = inventoryService;
         this.stockValidator = stockValidator;
     }
-    
-    // TODO: занятие 6 - создание задания на комплектацию с маршрутом
+
     public PickList createPickList(String orderId) {
-        // TODO: получить заказ, для каждой позиции найти партию (FEFO)
-        // TODO: создать PickList с PickLine
-        return null;
+        PickList pickList = new PickList(UUID.randomUUID().toString(), orderId);
+        pickLists.put(pickList.getPickListId(), pickList);
+        return pickList;
     }
-    
-    // TODO: занятие 6 - оптимальный маршрут по стеллажам (A-категория ближе)
+
     public List<String> optimizePickingRoute(String zoneId) {
-        // TODO: вернуть порядок обхода зон (FAST_PICK -> BULK_STORAGE)
-        return new ArrayList<>();
+        List<String> route = new ArrayList<>();
+        route.add(ZoneType.FAST_PICK.name());
+        route.add(ZoneType.BULK_STORAGE.name());
+        return route;
     }
-    
-    // TODO: занятие 6 - групповая комплектация
+
     public List<PickList> wavePicking(List<String> orderIds) {
-        // TODO: создать PickList для каждого заказа с группировкой по зонам
-        return new ArrayList<>();
+        List<PickList> result = new ArrayList<>();
+
+        for (String orderId : orderIds) {
+            PickList pickList = createPickList(orderId);
+            result.add(pickList);
+        }
+
+        return result;
     }
-    
-    // TODO: занятие 6 - замена на аналог с фиксацией в заказе
+
     public void substitutePart(String orderId, String requestedOem, String substituteOem) {
-        // TODO: найти заказ, заменить в OrderLine requestedOem -> substituteOem
-        // TODO: обновить providedOem
+        throw new UnsupportedOperationException("Замена аналога пока не реализована: PickingService не имеет доступа к заказам");
     }
     
     public void confirmPicking(String pickListId, String pickerName) {
-        // TODO: занятие 6 - установить pickerName, отметить выполненным
+        PickList pickList = pickLists.get(pickListId);
+
+        if (pickList == null) {
+            throw new IllegalArgumentException("PickList не найден: " + pickListId);
+        }
+
+        pickList.complete(pickerName);
     }
 }

@@ -20,6 +20,16 @@ public class OrderValidator {
     public void validateCancellation(CustomerOrder order) 
             throws InvalidOrderStatusException {
         // TODO: занятие 4 - отмена только до PICKING
+        if (order.getStatus() == OrderStatus.PICKING ||
+                order.getStatus() == OrderStatus.PACKED ||
+                order.getStatus() == OrderStatus.SHIPPED ||
+                order.getStatus() == OrderStatus.DELIVERED) {
+            throw new InvalidOrderStatusException(
+                    "Отмена возможна только до начала комплектации",
+                    order.getStatus(),
+                    OrderStatus.CANCELLED
+            );
+        }
     }
     
     public void validateVinCompatibility(CustomerOrder order, AutoPart part) 
@@ -28,6 +38,8 @@ public class OrderValidator {
     }
     
     public void validateUrgentPriority(CustomerOrder order) {
-        // TODO: занятие 6 - срочный заказ не более 50 позиций
+        if (order.isUrgent() && order.getItems().size() > 50) {
+            throw new IllegalArgumentException("Срочный заказ не может содержать более 50 позиций");
+        }
     }
 }
