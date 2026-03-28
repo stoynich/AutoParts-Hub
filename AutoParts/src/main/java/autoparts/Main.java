@@ -22,9 +22,12 @@ public class Main {
        
         
         // TODO: занятие 5 - создание сервиса заказов
-        
-        
-        // TODO: занятие 6 - создание сервисов комплектации и каталогов
+
+
+        PickingService pickingService = new PickingService(
+                inventoryService,
+                stockValidator
+        );
        
         
         // TODO: занятие 3 - добавление клиентов каталогов
