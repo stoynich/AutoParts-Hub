@@ -4,6 +4,7 @@ import autoparts.exception.*;
 import autoparts.logger.Logger;
 import autoparts.model.*;
 import autoparts.validation.OrderValidator;
+import autoparts.validation.VinValidator;
 
 import java.util.*;
 
@@ -12,41 +13,81 @@ public class OrderProcessingService {
     private final InventoryService inventoryService;
     private final OrderValidator orderValidator;
     private final Logger logger;
-    
-    public OrderProcessingService(InventoryService inventoryService, 
-                                 OrderValidator orderValidator, 
-                                 Logger logger) {
+    private final VinValidator vinValidator;
+
+    public OrderProcessingService(InventoryService inventoryService,
+                                  OrderValidator orderValidator,
+                                  VinValidator vinValidator,
+                                  Logger logger) {
         this.orders = new HashMap<>();
         this.inventoryService = inventoryService;
         this.orderValidator = orderValidator;
+        this.vinValidator = vinValidator;
         this.logger = logger;
     }
-    
-    // TODO: занятие 5 - создание заказа
-    public CustomerOrder createOrder(String externalOrderId, String clientId, 
-                                    String vinCode, Priority priority) 
+
+    public CustomerOrder createOrder(String externalOrderId, String clientId,
+                                     String vinCode, Priority priority)
             throws InvalidVinException {
-        // TODO: валидация VIN через VinValidator
-        // TODO: создать CustomerOrder, сохранить, залогировать
-        return null;
+        orderValidator.validateOrderCreation(externalOrderId);
+        vinValidator.validateVinFormat(vinCode);
+        vinValidator.validateVinExists(vinCode);
+
+        String orderId = UUID.randomUUID().toString();
+        CustomerOrder order = new CustomerOrder(orderId, externalOrderId, clientId, vinCode, priority);
+
+        orders.put(orderId, order);
+        logger.log("[ORDER] Создан заказ: " + externalOrderId + ", id=" + orderId);
+
+        return order;
     }
-    
-    // TODO: занятие 5 - добавление позиции с поиском по OEM или кросс-номеру
-    public void addItemToOrder(String orderId, String oemNumber, int quantity) 
-            throws OrderNotFoundException, PartNotFoundException, 
-                   IncompatiblePartException {
-        // TODO: найти заказ, найти запчасть (findByOem или findByCrossNumber)
-        // TODO: проверить VIN-совместимость
-        // TODO: добавить позицию с ценой на момент заказа
+
+    public void addItemToOrder(String orderId, String oemNumber, int quantity)
+            throws OrderNotFoundException, PartNotFoundException,
+            IncompatiblePartException {
+        CustomerOrder order = orders.get(orderId);
+        if (order == null) {
+            throw new OrderNotFoundException(orderId);
+        }
+
+        AutoPart part = inventoryService.findByOem(oemNumber);
+
+        if (part == null) {
+            List<AutoPart> analogs = inventoryService.findByCrossNumber(oemNumber);
+            if (analogs.isEmpty()) {
+                throw new PartNotFoundException(oemNumber);
+            }
+            part = analogs.get(0);
+        }
+
+        orderValidator.validateVinCompatibility(order, part);
+        order.addItem(part, quantity, part.getBasePrice());
+
+        logger.log("[ORDER] В заказ " + orderId + " добавлена позиция: " + part.getName() + ", qty=" + quantity);
     }
-    
+
     public void confirmOrder(String orderId) throws OrderNotFoundException {
-        // TODO: занятие 5 - проверить доступность, сменить статус на CONFIRMED
+        CustomerOrder order = orders.get(orderId);
+        if (order == null) {
+            throw new OrderNotFoundException(orderId);
+        }
+
+        order.changeStatus(OrderStatus.CONFIRMED);
+        logger.log("[ORDER] Заказ подтвержден: " + orderId);
     }
-    
-    public void reserveForOrder(String orderId) 
+
+    public void reserveForOrder(String orderId)
             throws OrderNotFoundException, InsufficientStockException {
-        // TODO: занятие 5 - зарезервировать товары под заказ
+        CustomerOrder order = orders.get(orderId);
+        if (order == null) {
+            throw new OrderNotFoundException(orderId);
+        }
+
+        for (OrderLine line : order.getItems()) {
+            inventoryService.reserveParts(line.getAutoPart(), line.getQuantity());
+        }
+
+        logger.log("[ORDER] Товары зарезервированы для заказа: " + orderId);
     }
     
     // TODO: занятие 6 - создание задания на комплектацию
@@ -81,14 +122,28 @@ public class OrderProcessingService {
         // TODO: занятие 2 - поиск в orders
         return orders.get(orderId);
     }
-    
+
     public List<CustomerOrder> getOrdersByStatus(OrderStatus status) {
-        // TODO: занятие 5 - фильтрация по статусу
-        return new ArrayList<>();
+        List<CustomerOrder> result = new ArrayList<>();
+
+        for (CustomerOrder order : orders.values()) {
+            if (order.getStatus() == status) {
+                result.add(order);
+            }
+        }
+
+        return result;
     }
-    
+
     public List<CustomerOrder> getUrgentOverdue() {
-        // TODO: занятие 5 - срочные заказы с isOverdueForPicking() = true
-        return new ArrayList<>();
+        List<CustomerOrder> result = new ArrayList<>();
+
+        for (CustomerOrder order : orders.values()) {
+            if (order.isUrgent() && order.isOverdueForPicking()) {
+                result.add(order);
+            }
+        }
+
+        return result;
     }
 }
