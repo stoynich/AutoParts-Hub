@@ -4,6 +4,8 @@ import autoparts.service.InventoryService;
 import autoparts.service.OrderProcessingService;
 import autoparts.service.PickingService;
 import autoparts.service.CatalogIntegrationService;
+import autoparts.model.CustomerOrder;
+import autoparts.model.Priority;
 
 import java.util.Scanner;
 
@@ -57,13 +59,31 @@ public class ConsoleMenu {
                         // TODO: занятие 2 - Проверить совместимость с VIN
                         break;
                     case 9:
-                        // TODO: занятие 5 - Создать заказ клиента
+                        String externalOrderId = readStringInput("Введите внешний ID заказа: ");
+                        String clientId = readStringInput("Введите ID клиента: ");
+                        String vinCode = readStringInput("Введите VIN: ");
+                        String priorityInput = readStringInput("Введите приоритет (REGULAR/URGENT): ");
+
+                        Priority priority = Priority.valueOf(priorityInput.toUpperCase());
+                        CustomerOrder order = orderService.createOrder(externalOrderId, clientId, vinCode, priority);
+
+                        System.out.println("Заказ создан: " + order);
                         break;
                     case 10:
-                        // TODO: занятие 5 - Добавить позицию в заказ (с проверкой VIN)
+                        String orderIdForItem = readStringInput("Введите ID заказа: ");
+                        String oemNumber = readStringInput("Введите OEM или кросс-номер: ");
+                        int quantity = readIntInput("Введите количество: ");
+
+                        orderService.addItemToOrder(orderIdForItem, oemNumber, quantity);
+                        System.out.println("Позиция добавлена в заказ");
                         break;
                     case 11:
-                        // TODO: занятие 5 - Подтвердить заказ и зарезервировать
+                        String orderIdToConfirm = readStringInput("Введите ID заказа: ");
+
+                        orderService.confirmOrder(orderIdToConfirm);
+                        orderService.reserveForOrder(orderIdToConfirm);
+
+                        System.out.println("Заказ подтвержден и товары зарезервированы");
                         break;
                     case 12:
                         // TODO: занятие 6 - Создать задание на комплектацию
@@ -81,10 +101,11 @@ public class ConsoleMenu {
                         // TODO: занятие 6 - Отменить заказ
                         break;
                     case 17:
-                        // TODO: занятие 5 - Отчёт: запчасти с низким остатком
+                        int threshold = readIntInput("Введите порог остатка: ");
+                        System.out.println(inventoryService.getLowStockReport(threshold));
                         break;
                     case 18:
-                        // TODO: занятие 5 - Отчёт: просроченные сертификаты
+                        System.out.println(inventoryService.getExpiredBatches());
                         break;
                     case 19:
                         // TODO: занятие 6 - Отчёт: просроченные срочные заказы
