@@ -99,7 +99,6 @@ public class ConsoleMenu {
                         System.out.println("Неверный выбор");
                 }
             } catch (Exception e) {
-                // TODO: занятие 4 - обработка исключений с выводом сообщения
                 System.err.println("Ошибка: " + e.getMessage());
             }
         }
