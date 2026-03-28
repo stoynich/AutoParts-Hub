@@ -66,19 +66,41 @@ public class ConsoleMenu {
                         // TODO: занятие 5 - Подтвердить заказ и зарезервировать
                         break;
                     case 12:
-                        // TODO: занятие 6 - Создать задание на комплектацию
+                        String orderIdForPicking = readStringInput("Введите ID заказа: ");
+                        System.out.println(orderService.startPicking(orderIdForPicking));
                         break;
                     case 13:
-                        // TODO: занятие 6 - Выполнить wave picking (групповая комплектация)
+                        String firstOrderId = readStringInput("Введите ID первого заказа: ");
+                        String secondOrderId = readStringInput("Введите ID второго заказа: ");
+
+                        java.util.List<String> orderIds = new java.util.ArrayList<>();
+                        orderIds.add(firstOrderId);
+                        orderIds.add(secondOrderId);
+
+                        System.out.println(pickingService.wavePicking(orderIds));
                         break;
                     case 14:
-                        // TODO: занятие 6 - Заменить на аналог в заказе
+                        String orderIdForSubstitute = readStringInput("Введите ID заказа: ");
+                        String requestedOem = readStringInput("Введите исходный OEM: ");
+                        String substituteOem = readStringInput("Введите OEM аналога: ");
+
+                        pickingService.substitutePart(orderIdForSubstitute, requestedOem, substituteOem);
+                        System.out.println("Замена выполнена");
                         break;
                     case 15:
-                        // TODO: занятие 6 - Упаковать и отгрузить заказ
+                        String orderIdToShip = readStringInput("Введите ID заказа: ");
+                        double actualWeight = Double.parseDouble(readStringInput("Введите фактический вес: "));
+                        String trackingNumber = readStringInput("Введите трек-номер: ");
+
+                        orderService.packOrder(orderIdToShip, actualWeight);
+                        orderService.shipOrder(orderIdToShip, trackingNumber);
+
+                        System.out.println("Заказ упакован и отгружен");
                         break;
                     case 16:
-                        // TODO: занятие 6 - Отменить заказ
+                        String orderIdToCancel = readStringInput("Введите ID заказа: ");
+                        orderService.cancelOrder(orderIdToCancel);
+                        System.out.println("Заказ отменён");
                         break;
                     case 17:
                         // TODO: занятие 5 - Отчёт: запчасти с низким остатком
@@ -87,7 +109,7 @@ public class ConsoleMenu {
                         // TODO: занятие 5 - Отчёт: просроченные сертификаты
                         break;
                     case 19:
-                        // TODO: занятие 6 - Отчёт: просроченные срочные заказы
+                        System.out.println(orderService.getUrgentOverdue());
                         break;
                     case 20:
                         // TODO: занятие 3 - Синхронизировать с каталогом TecDoc
