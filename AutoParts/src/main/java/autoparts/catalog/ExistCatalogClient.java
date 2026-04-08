@@ -1,10 +1,10 @@
 package autoparts.catalog;
 
 public class ExistCatalogClient implements CatalogIntegrable {
-    
+
     @Override
     public void syncWithCatalog() {
-        // TODO: занятие 3 - имитация API Exist.ru
+        System.out.println("Sync with Exist.ru...");
     }
     
     @Override

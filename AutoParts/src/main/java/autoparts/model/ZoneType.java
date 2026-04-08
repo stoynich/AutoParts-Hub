@@ -1,11 +1,25 @@
 package autoparts.model;
 
 public enum ZoneType {
-    FAST_PICK,      // быстрая комплектация (ABC-A)
-    BULK_STORAGE,   // массовое хранение (ABC-B/C)
-    RETURNS,        // возвраты и брак
-    QUARANTINE,     // карантинная зона (без сертификатов)
-    CROSS_DOCKING;  // сквозная погрузка
-    
-    // TODO: занятие 3 - добавить поля isFastAccess, requiresCertificate
+    FAST_PICK(true, true),
+    BULK_STORAGE(false, true),
+    RETURNS(false, false),
+    QUARANTINE(false, false),
+    CROSS_DOCKING(true, false);
+
+    private final boolean isFastAccess;
+    private final boolean requiresCertificate;
+
+    ZoneType(boolean isFastAccess, boolean requiresCertificate) {
+        this.isFastAccess = isFastAccess;
+        this.requiresCertificate = requiresCertificate;
+    }
+
+    public boolean isFastAccess() {
+        return isFastAccess;
+    }
+
+    public boolean requiresCertificate() {
+        return requiresCertificate;
+    }
 }

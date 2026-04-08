@@ -1,9 +1,30 @@
 package autoparts.model;
 
 public enum ABCCategory {
-    A,  // высокий оборот (>100 шт/мес), зона быстрого доступа
-    B,  // средний оборот (20-100 шт/мес)
-    C;  // низкий оборот (<20 шт/мес), дальние стеллажи
-    
-    // TODO: занятие 3 - добавить поля minTurnover, maxTurnover, zoneType
+    A(100, Integer.MAX_VALUE, ZoneType.FAST_PICK),
+    B(20, 100, ZoneType.BULK_STORAGE),
+    C(0, 20, ZoneType.BULK_STORAGE);
+
+    private final int minTurnover;
+    private final int maxTurnover;
+    private final ZoneType zoneType;
+
+    ABCCategory(int minTurnover, int maxTurnover, ZoneType zoneType) {
+        this.minTurnover = minTurnover;
+        this.maxTurnover = maxTurnover;
+        this.zoneType = zoneType;
+    }
+
+    public int getMinTurnover() {
+        return minTurnover;
+    }
+
+    public int getMaxTurnover() {
+        return maxTurnover;
+    }
+
+    public ZoneType getZoneType() {
+        return zoneType;
+    }
 }
+

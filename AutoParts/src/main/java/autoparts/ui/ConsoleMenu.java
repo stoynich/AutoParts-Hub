@@ -90,7 +90,8 @@ public class ConsoleMenu {
                         // TODO: занятие 6 - Отчёт: просроченные срочные заказы
                         break;
                     case 20:
-                        // TODO: занятие 3 - Синхронизировать с каталогом TecDoc
+                        catalogService.syncWithTecDoc();
+                        System.out.println("Синхронизация с TecDoc завершена");
                         break;
                     case 0:
                         System.out.println("Выход...");

@@ -1,10 +1,10 @@
 package autoparts.catalog;
 
 public class TecDocCatalogClient implements CatalogIntegrable {
-    
+
     @Override
     public void syncWithCatalog() {
-        // TODO: занятие 3 - имитация API TecDoc
+        System.out.println("Sync with TecDoc...");
     }
     
     @Override

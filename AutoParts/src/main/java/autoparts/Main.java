@@ -25,9 +25,33 @@ public class Main {
         
         
         // TODO: занятие 6 - создание сервисов комплектации и каталогов
-       
-        
-        // TODO: занятие 3 - добавление клиентов каталогов
+
+
+        Logger logger = new ConsoleLogger();
+
+        InventoryService inventoryService = new InventoryService(logger);
+        PricingService pricingService = new PricingService();
+
+        OrderValidator orderValidator = new OrderValidator();
+        StockValidator stockValidator = new StockValidator();
+        VinValidator vinValidator = new VinValidator();
+
+        OrderProcessingService orderService = new OrderProcessingService(
+                inventoryService,
+                orderValidator,
+                logger
+        );
+
+        PickingService pickingService = new PickingService(
+                inventoryService,
+                stockValidator
+        );
+
+        CatalogIntegrationService catalogService = new CatalogIntegrationService(logger);
+
+        catalogService.addCatalog(new TecDocCatalogClient());
+        catalogService.addCatalog(new ExistCatalogClient());
+        catalogService.addCatalog(new AutodocCatalogClient());
 
         System.out.println("=== ЗАНЯТИЕ 1: Тестовые данные ===\n");
 
@@ -105,8 +129,15 @@ public class Main {
 
         // TODO: 2 запчасти с кросс-номерами, 2 зоны (A и C категории), 1 поставщик
         // TODO: вывести в консоль созданные объекты
-        
-        // TODO: занятие 3 - запуск меню
+
+        ConsoleMenu consoleMenu = new ConsoleMenu(
+                inventoryService,
+                orderService,
+                pickingService,
+                catalogService
+        );
+
+        consoleMenu.start();
        
     }
 }

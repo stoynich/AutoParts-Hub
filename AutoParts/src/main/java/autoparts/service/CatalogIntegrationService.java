@@ -17,28 +17,36 @@ public class CatalogIntegrationService {
     public void addCatalog(CatalogIntegrable catalog) {
         catalogs.add(catalog);
     }
-    
-    // TODO: занятие 3 - синхронизация с TecDoc
+
     public void syncWithTecDoc() {
-        // TODO: найти TecDocCatalogClient в catalogs, вызвать syncWithCatalog()
-        logger.log("[SYNC] Синхронизация с TecDoc...");
+        for (CatalogIntegrable catalog : catalogs) {
+            if (catalog.getClass().getSimpleName().equals("TecDocCatalogClient")) {
+                catalog.syncWithCatalog();
+                logger.log("[SYNC] Синхронизация с TecDoc выполнена");
+            }
+        }
     }
-    
-    // TODO: занятие 3 - синхронизация с Exist.ru
+
     public void syncWithExist() {
-        // TODO: найти ExistCatalogClient в catalogs, вызвать syncWithCatalog()
-        logger.log("[SYNC] Синхронизация с Exist.ru...");
+        for (CatalogIntegrable catalog : catalogs) {
+            if (catalog.getClass().getSimpleName().equals("ExistCatalogClient")) {
+                catalog.syncWithCatalog();
+                logger.log("[SYNC] Синхронизация с Exist.ru выполнена");
+            }
+        }
     }
-    
-    // TODO: занятие 3 - обновление кросс-номеров
+
     public List<String> updateCrossNumbers(String oemNumber) {
-        // TODO: запросить кросс-номера из каталогов
-        return new java.util.ArrayList<>();
+        List<String> result = new java.util.ArrayList<>();
+        for (CatalogIntegrable catalog : catalogs) {
+            catalog.syncWithCatalog();
+            result.add("CROSS-" + oemNumber);
+        }
+        return result;
     }
-    
-    // TODO: занятие 3 - проверка совместимости с VIN через API
+
     public boolean checkVinCompatibility(String oemNumber, String vinCode) {
-        // TODO: имитация API запроса
-        return true;
+        logger.log("[VIN] Проверка совместимости " + oemNumber + " с VIN " + vinCode);
+        return vinCode != null && vinCode.length() == 17;
     }
 }
