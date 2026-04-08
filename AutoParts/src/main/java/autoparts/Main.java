@@ -103,8 +103,20 @@ public class Main {
         System.out.println("  " + supplier);
 
 
-        // TODO: 2 запчасти с кросс-номерами, 2 зоны (A и C категории), 1 поставщик
-        // TODO: вывести в консоль созданные объекты
+        System.out.println("\n=== ВЫВОД ТЕСТОВЫХ ДАННЫХ (Занятие 2) ===\n");
+
+        System.out.println("ЗАПЧАСТИ:");
+        System.out.println("  " + part1);
+        System.out.println("  Кросс-номера: " + part1.getCrossNumbers());
+        System.out.println("  " + part2);
+        System.out.println("  Кросс-номера: " + part2.getCrossNumbers());
+
+        System.out.println("\nЗОНЫ ХРАНЕНИЯ:");
+        System.out.println("  " + zoneA);
+        System.out.println("  " + zoneC);
+
+        System.out.println("\nПОСТАВЩИК:");
+        System.out.println("  " + supplier);
         
         // TODO: занятие 3 - запуск меню
        
